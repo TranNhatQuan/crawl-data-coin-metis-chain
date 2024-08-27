@@ -7,20 +7,7 @@ import Container, { Inject, Service } from 'typedi'
 import { Config } from '../configs'
 
 export enum QueueName {
-    checkQueueToStartCrawl = 'checkQueueToStartCrawl',
-    crawlListLeague = 'crawlListLeague',
-    crawlListEventByLeague = 'crawlListEventByLeague',
-    crawlDetailEvent = 'crawlDetailEvent',
-    updateLeagueToDB = 'updateLeagueToDB',
-    updateEventToDB = 'updateEventToDB',
-    updateMarketToDB = 'updateMarketToDB',
-    updateSelectionToDB = 'updateSelectionToDB',
-}
-
-enum CRON_TIME {
-    crawlListLeague = 5 * 1000, //5 s
-    crawlListEvent = 5 * 1000, //5 s
-    crawlDetailEvent = 5 * 1000, //5 s
+    test = 'test',
 }
 
 @Service()
@@ -81,23 +68,4 @@ export const setupQueues = () => {
 export const setupCronJob = async () => {
     //await checkQueueToStartCrawl()
     return
-}
-
-export const checkQueueToStartCrawl = async () => {
-    const queue = Container.get(QueueManager).getQueue(
-        QueueName.checkQueueToStartCrawl
-    )
-    const oldRepeatableJobs = await queue.getRepeatableJobs()
-    for (const job of oldRepeatableJobs) {
-        await queue.removeRepeatableByKey(job.key)
-    }
-    queue.add(
-        QueueName.checkQueueToStartCrawl,
-        {},
-        {
-            repeat: {
-                every: CRON_TIME.crawlListLeague,
-            },
-        }
-    )
 }
